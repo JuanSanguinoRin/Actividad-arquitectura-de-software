@@ -17,3 +17,12 @@ Flujo seleccionado: **checkout de una entrada con silla numerada**, desde que el
 
 
 
+## Paso 2 — Decisión paso por paso
+
+|Paso|Quién|Síncrono o asíncrono|Si falla|Si se repite|
+
+1. Bloquear silla|API / Inventario|Síncrono|Se rechaza si ya estaba tomada; condición de carrera resuelta con actualización atómica en BD|Mismo `orden\_id`: no bloquea una segunda vez|
+2. Cobrar|API → Pasarela (externo)|Síncrono, timeout \~15s|Se libera el bloqueo de la silla|Mismo `orden\_id` como `Idempotency-Key`: no cobra dos veces|
+3. Emitir QR|Worker interno|Asíncrono (cola interna)|Reintentos con backoff; alerta manual si persiste|Verifica `orden\_id` antes de emitir: no duplica boleta|
+4. Notificar|Worker interno → correo/push|Asíncrono, en paralelo al paso 5|Reintentos con backoff; boleta ya visible en la app|Idempotencia suave: evita reenvío innecesario|
+5. Actualizar tablero/aforo|Worker interno|Asíncrono, en paralelo al paso 4|Tablero se atrasa; alerta si supera un umbral|Mismo `orden\_id`: no duplica el conteo del aforo|
