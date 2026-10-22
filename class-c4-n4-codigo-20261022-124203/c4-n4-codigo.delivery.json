@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "1c1c3ebe-9c0c-49d6-918e-bc42c55fe34e",
+  "status": "current",
+  "command": "deliver",
+  "type": "class",
+  "input": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\class-c4-n4-codigo-20261022-124203\\candidate.json",
+  "output": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\class-c4-n4-codigo-20261022-124203\\c4-n4-codigo.html",
+  "specification": {
+    "sha256": "8948467794d8c1281768e67a0712ad9927d122a1b8fda2ef9251f3aa22880a28",
+    "bytes": 7441
+  },
+  "artifact": {
+    "sha256": "0f8ccb03e44cc658d14b2ea2daeaa827858af6f7cbedf4f4a82e52d0f8f56e1c",
+    "bytes": 855178
+  }
+}

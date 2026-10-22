@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "diagram_type": "class",
+  "meta": {
+    "title": "C4 Nivel 4 · Código del checkout",
+    "locale": "es",
+    "output": ".archify/class-c4-n4-codigo-20261022-124203/c4-n4-codigo.html",
+    "quality_profile": "showcase"
+  },
+  "layout": { "mode": "grid" },
+  "types": [
+    {
+      "id": "limite",
+      "label": "LimitePorPersona",
+      "kind": "class",
+      "sublabel": "Hace cumplir el tope por evento",
+      "row": 0,
+      "col": 0,
+      "attributes": [
+        { "name": "maxPorEvento", "type": "int", "visibility": "private" }
+      ],
+      "methods": [
+        { "name": "verificar", "parameters": "compradorId: UUID, eventoId: UUID", "returns": "void", "visibility": "public" }
+      ]
+    },
+    {
+      "id": "checkout",
+      "label": "CheckoutService",
+      "kind": "class",
+      "sublabel": "Orquesta bloqueo, cobro y venta",
+      "row": 0,
+      "col": 1,
+      "attributes": [
+        { "name": "bloqueos", "type": "BloqueoAsientos", "visibility": "private" },
+        { "name": "pasarela", "type": "PasarelaPagos", "visibility": "private" },
+        { "name": "boletas", "type": "BoletaRepository", "visibility": "private" }
+      ],
+      "methods": [
+        { "name": "reservar", "parameters": "eventoId: UUID, sillaId: String, compradorId: UUID", "returns": "Reserva", "visibility": "public" },
+        { "name": "pagar", "parameters": "reservaId: UUID, tarjeta: TokenTarjeta", "returns": "Boleta", "visibility": "public" }
+      ]
+    },
+    {
+      "id": "pasarela",
+      "label": "PasarelaPagos",
+      "kind": "interface",
+      "sublabel": "Contrato con la pasarela externa",
+      "row": 0,
+      "col": 2,
+      "methods": [
+        { "name": "cobrar", "parameters": "orden: OrdenPago", "returns": "ResultadoPago", "visibility": "public", "abstract": true }
+      ]
+    },
+    {
+      "id": "bloqueo",
+      "label": "BloqueoAsientos",
+      "kind": "interface",
+      "sublabel": "Bloqueo temporal de una silla",
+      "row": 1,
+      "col": 0,
+      "methods": [
+        { "name": "bloquear", "parameters": "sillaId: String, compradorId: UUID", "returns": "Optional<Reserva>", "visibility": "public", "abstract": true },
+        { "name": "liberar", "parameters": "reservaId: UUID", "returns": "void", "visibility": "public", "abstract": true }
+      ]
+    },
+    {
+      "id": "repo",
+      "label": "BoletaRepository",
+      "kind": "interface",
+      "sublabel": "UNIQUE (evento_id, silla_id)",
+      "row": 1,
+      "col": 1,
+      "methods": [
+        { "name": "guardar", "parameters": "boleta: Boleta", "returns": "Boleta", "visibility": "public", "abstract": true },
+        { "name": "buscarPorQr", "parameters": "qr: String", "returns": "Optional<Boleta>", "visibility": "public", "abstract": true }
+      ]
+    },
+    {
+      "id": "adapter",
+      "label": "PasarelaHttpAdapter",
+      "kind": "class",
+      "sublabel": "Cliente HTTPS con 3-D Secure",
+      "row": 1,
+      "col": 2,
+      "attributes": [
+        { "name": "timeout", "type": "Duration = 10 s", "visibility": "private" }
+      ],
+      "methods": [
+        { "name": "cobrar", "parameters": "orden: OrdenPago", "returns": "ResultadoPago", "visibility": "public" },
+        { "name": "procesarWebhook", "parameters": "evento: WebhookPago", "returns": "void", "visibility": "public" }
+      ]
+    },
+    {
+      "id": "redis",
+      "label": "RedisBloqueoAsientos",
+      "kind": "class",
+      "sublabel": "SET NX EX 600",
+      "row": 2,
+      "col": 0,
+      "attributes": [
+        { "name": "TTL", "type": "Duration = 10 min", "visibility": "private", "static": true },
+        { "name": "redis", "type": "StringRedisTemplate", "visibility": "private" }
+      ],
+      "methods": [
+        { "name": "bloquear", "parameters": "sillaId: String, compradorId: UUID", "returns": "Optional<Reserva>", "visibility": "public" },
+        { "name": "liberar", "parameters": "reservaId: UUID", "returns": "void", "visibility": "public" }
+      ]
+    },
+    {
+      "id": "boleta",
+      "label": "Boleta",
+      "kind": "class",
+      "sublabel": "Entrada nominal con QR firmado",
+      "row": 2,
+      "col": 1,
+      "attributes": [
+        { "name": "id", "type": "UUID", "visibility": "private" },
+        { "name": "sillaId", "type": "String", "visibility": "private" },
+        { "name": "titularId", "type": "UUID", "visibility": "private" },
+        { "name": "qrFirmado", "type": "String", "visibility": "private" }
+      ],
+      "methods": [
+        { "name": "transferirA", "parameters": "titular: UUID, inicio: Instant", "returns": "void", "visibility": "public" },
+        { "name": "revocar", "returns": "void", "visibility": "public" }
+      ]
+    },
+    {
+      "id": "resultado",
+      "label": "ResultadoPago",
+      "kind": "enum",
+      "sublabel": "Respuesta de la pasarela",
+      "row": 2,
+      "col": 2,
+      "attributes": [
+        { "name": "APROBADA" },
+        { "name": "RECHAZADA" },
+        { "name": "FONDOS_INSUFICIENTES" },
+        { "name": "ERROR_AUTENTICACION" }
+      ]
+    },
+    {
+      "id": "reserva",
+      "label": "Reserva",
+      "kind": "record",
+      "sublabel": "Silla bloqueada y su vencimiento",
+      "row": 3,
+      "col": 0,
+      "attributes": [
+        { "name": "id", "type": "UUID" },
+        { "name": "sillaId", "type": "String" },
+        { "name": "compradorId", "type": "UUID" },
+        { "name": "expiraEn", "type": "Instant" }
+      ]
+    },
+    {
+      "id": "estado",
+      "label": "EstadoBoleta",
+      "kind": "enum",
+      "sublabel": "Ciclo de vida de la boleta",
+      "row": 3,
+      "col": 1,
+      "attributes": [
+        { "name": "VIGENTE" },
+        { "name": "TRANSFERIDA" },
+        { "name": "REVOCADA" },
+        { "name": "USADA" }
+      ]
+    }
+  ],
+  "relationships": [
+    { "id": "checkout-limite", "from": "checkout", "to": "limite", "kind": "dependency", "label": "verifica" },
+    { "id": "checkout-pasarela", "from": "checkout", "to": "pasarela", "kind": "dependency", "label": "cobra" },
+    { "id": "checkout-bloqueo", "from": "checkout", "to": "bloqueo", "kind": "dependency", "label": "bloquea" },
+    { "id": "checkout-repo", "from": "checkout", "to": "repo", "kind": "dependency", "label": "guarda" },
+    { "id": "redis-implementa", "from": "redis", "to": "bloqueo", "kind": "realization" },
+    { "id": "adapter-implementa", "from": "adapter", "to": "pasarela", "kind": "realization" },
+    { "id": "adapter-resultado", "from": "adapter", "to": "resultado", "kind": "dependency", "label": "devuelve" },
+    { "id": "redis-reserva", "from": "redis", "to": "reserva", "kind": "dependency", "label": "crea" },
+    { "id": "repo-boleta", "from": "repo", "to": "boleta", "kind": "dependency", "label": "persiste" },
+    { "id": "boleta-estado", "from": "boleta", "to": "estado", "kind": "association", "label": "estado" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Qué garantiza", "items": ["Redis evita que dos compradores bloqueen la misma silla a la vez", "La restricción UNIQUE en PostgreSQL impide la doble venta aunque Redis falle"] },
+    { "dot": "rose", "title": "Si el cobro falla", "items": ["pagar() llama a liberar() y la silla vuelve al mapa", "Si nadie paga, el TTL de 10 min libera la silla solo"] },
+    { "dot": "slate", "title": "Alcance", "items": ["Nivel 4 solo del módulo de checkout, el más crítico", "Código ilustrativo: aún no existe implementación"] }
+  ]
+}

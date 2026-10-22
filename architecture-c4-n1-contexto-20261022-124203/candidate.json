@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "C4 Nivel 1 · Contexto del sistema de boletería",
+    "locale": "es",
+    "output": ".archify/architecture-c4-n1-contexto-20261022-124203/c4-n1-contexto.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "comprador",
+      "type": "external",
+      "icon": "person",
+      "label": "Comprador",
+      "sublabel": "Persona",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "organizador",
+      "type": "external",
+      "icon": "person",
+      "label": "Organizador",
+      "sublabel": "Persona",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "personal",
+      "type": "external",
+      "icon": "person",
+      "label": "Personal de puerta",
+      "sublabel": "Persona con lector",
+      "pos": [
+        40,
+        420
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "sistema",
+      "type": "backend",
+      "label": "Sistema de boletería",
+      "sublabel": "Vende y valida boletas",
+      "pos": [
+        400,
+        40
+      ],
+      "size": [
+        240,
+        444
+      ]
+    },
+    {
+      "id": "pasarela",
+      "type": "external",
+      "label": "Pasarela de pagos",
+      "sublabel": "Sistema externo",
+      "pos": [
+        850,
+        50
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "mensajeria",
+      "type": "external",
+      "label": "Email y push",
+      "sublabel": "Sistema externo",
+      "pos": [
+        850,
+        240
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "autoridades",
+      "type": "external",
+      "icon": "briefcase",
+      "label": "Autoridades locales",
+      "sublabel": "Institución externa",
+      "pos": [
+        850,
+        420
+      ],
+      "size": [
+        170,
+        64
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "comprador-sistema",
+      "from": "comprador",
+      "to": "sistema",
+      "label": "Busca, elige silla y paga",
+      "variant": "emphasis"
+    },
+    {
+      "id": "organizador-sistema",
+      "from": "organizador",
+      "to": "sistema",
+      "label": "Configura y ve tablero"
+    },
+    {
+      "id": "personal-sistema",
+      "from": "personal",
+      "to": "sistema",
+      "label": "Valida QR (también offline)"
+    },
+    {
+      "id": "sistema-pasarela",
+      "from": "sistema",
+      "to": "pasarela",
+      "label": "Cobro con 3-D Secure",
+      "variant": "security"
+    },
+    {
+      "id": "pasarela-sistema",
+      "from": "pasarela",
+      "to": "sistema",
+      "label": "Resultado y webhooks",
+      "variant": "dashed"
+    },
+    {
+      "id": "sistema-mensajeria",
+      "from": "sistema",
+      "to": "mensajeria",
+      "label": "Boleta QR (email/push)",
+      "variant": "dashed"
+    },
+    {
+      "id": "autoridades-sistema",
+      "from": "autoridades",
+      "to": "sistema",
+      "label": "Consulta y audita aforo"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Qué recibe cada actor",
+      "items": [
+        "Comprador: fila virtual, mapa en tiempo real y boleta QR",
+        "Organizador: tablero cada 10 s y reportes",
+        "Personal de puerta: Aprobado, Denegado, Ya ingresado, Revocada o Localidad incorrecta",
+        "Autoridades: certificados de aforo vendido y en sala"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Supuestos adoptados",
+      "items": [
+        "Bloqueo de silla: 10 min",
+        "Checkout: 10.000 solicitudes/s en pico",
+        "Transferencias hasta 30 min antes del evento",
+        "40 torniquetes + 10 lectores de respaldo"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Frontera",
+      "items": [
+        "Nivel 1: el sistema es una caja negra, sin tecnologías",
+        "El envío de email y push lo hace un proveedor externo"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "48321af4-e016-418b-8bf8-0857ccfe1dc2",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\candidate.json",
+  "output": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\c4-n1-contexto.html",
+  "specification": {
+    "sha256": "8ee5afb9af5a84fa89f8a2172132b3d171ed352bae4981e8ae66f886349bd53f",
+    "bytes": 4031
+  },
+  "artifact": {
+    "sha256": "20642a66e1f5d38cd58e505960e8e0a03800cb7bce6e7cab2291e391f70b3eb2",
+    "bytes": 822351
+  }
+}

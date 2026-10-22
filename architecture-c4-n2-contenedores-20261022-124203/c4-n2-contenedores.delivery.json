@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "f4efddce-03cf-41b3-952d-1cbf8cf98b7e",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n2-contenedores-20261022-124203\\candidate.json",
+  "output": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n2-contenedores-20261022-124203\\c4-n2-contenedores.html",
+  "specification": {
+    "sha256": "c09ea055becaa6ec6591f8978d781426e50cc6c31ab4f22a34848c9f2b34cd99",
+    "bytes": 8134
+  },
+  "artifact": {
+    "sha256": "1b9ef71af1e7f557c85b1b1356f777ce5b29cfd400be3b0ba3cbc8e5f21f520d",
+    "bytes": 849630
+  }
+}

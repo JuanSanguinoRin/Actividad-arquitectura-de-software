@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\candidate.json",
+    "sha256": "d8341da9c88db95fae0805a3fae12372bdc866cbdbc96cd5ead5c72ca2294e0d",
+    "bytes": 4166
+  },
+  "artifact": {
+    "path": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\c4-n1-contexto.html",
+    "sha256": "507c8a9f9d58f0533a47eb4c2e4161f6e1c763e5c85fbd6ccf303f6eb9207b29",
+    "bytes": 820587
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\review-2\\c4-n1-contexto.finalize.json",
+    "summaryReceipt": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\review-2\\c4-n1-contexto.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\angel\\OneDrive\\Desktop\\ARQUITECTURA\\.archify\\architecture-c4-n1-contexto-20261022-124203\\review-2\\c4-n1-contexto.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-22T17:10:30.503Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 6642,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

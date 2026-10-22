@@ -1,0 +1,429 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "C4 Nivel 2 · Contenedores del sistema de boletería",
+    "locale": "es",
+    "output": ".archify/architecture-c4-n2-contenedores-20261022-124203/c4-n2-contenedores.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "comprador",
+      "type": "external",
+      "icon": "person",
+      "label": "Comprador",
+      "sublabel": "Persona",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "organizador",
+      "type": "external",
+      "icon": "person",
+      "label": "Organizador",
+      "sublabel": "Persona",
+      "pos": [
+        420,
+        40
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "autoridades",
+      "type": "external",
+      "icon": "briefcase",
+      "label": "Autoridades",
+      "sublabel": "Institución",
+      "pos": [
+        610,
+        40
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "personal",
+      "type": "external",
+      "icon": "person",
+      "label": "Personal puerta",
+      "sublabel": "Persona",
+      "pos": [
+        870,
+        40
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "Web comprador",
+      "sublabel": "React SPA",
+      "pos": [
+        40,
+        210
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "portal",
+      "type": "frontend",
+      "label": "Portal de gestión",
+      "sublabel": "React SPA · organizador y autoridades",
+      "pos": [
+        420,
+        210
+      ],
+      "size": [
+        340,
+        64
+      ]
+    },
+    {
+      "id": "app-puerta",
+      "type": "frontend",
+      "label": "App de puerta",
+      "sublabel": "Android · SQLite",
+      "pos": [
+        870,
+        210
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "sala",
+      "type": "security",
+      "label": "Sala de espera",
+      "sublabel": "Go · anti-bot",
+      "pos": [
+        40,
+        380
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API de boletería",
+      "sublabel": "Java 21 · Spring Boot · monolito modular",
+      "tag": "Spring Modulith",
+      "pos": [
+        220,
+        380
+      ],
+      "size": [
+        790,
+        80
+      ]
+    },
+    {
+      "id": "redis-fila",
+      "type": "database",
+      "label": "Redis fila",
+      "sublabel": "Posiciones",
+      "pos": [
+        40,
+        560
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "broker",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "Cola de emisión",
+      "pos": [
+        220,
+        560
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "Primaria",
+      "pos": [
+        420,
+        560
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "replica",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "Réplica de lectura",
+      "pos": [
+        640,
+        560
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "redis-bloqueos",
+      "type": "database",
+      "label": "Redis bloqueos",
+      "sublabel": "TTL 10 min",
+      "pos": [
+        870,
+        560
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker emisión",
+      "sublabel": "Spring Boot",
+      "pos": [
+        220,
+        740
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "mensajeria",
+      "type": "external",
+      "label": "Email y push",
+      "sublabel": "Sistema externo",
+      "pos": [
+        220,
+        920
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "pasarela",
+      "type": "external",
+      "label": "Pasarela",
+      "sublabel": "Pagos · 3DS",
+      "pos": [
+        1080,
+        380
+      ],
+      "size": [
+        120,
+        80
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Sistema de boletería",
+      "wraps": [
+        "spa",
+        "portal",
+        "app-puerta",
+        "sala",
+        "api",
+        "redis-fila",
+        "broker",
+        "pg",
+        "replica",
+        "redis-bloqueos",
+        "worker"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "comprador-spa",
+      "from": "comprador",
+      "to": "spa",
+      "label": "Compra boletas",
+      "variant": "emphasis"
+    },
+    {
+      "id": "organizador-portal",
+      "from": "organizador",
+      "to": "portal",
+      "label": "Configura eventos"
+    },
+    {
+      "id": "autoridades-portal",
+      "from": "autoridades",
+      "to": "portal",
+      "label": "Consulta aforo"
+    },
+    {
+      "id": "personal-app",
+      "from": "personal",
+      "to": "app-puerta",
+      "label": "Escanea QR"
+    },
+    {
+      "id": "spa-sala",
+      "from": "spa",
+      "to": "sala",
+      "label": "Entra a la fila",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sala-redis",
+      "from": "sala",
+      "to": "redis-fila",
+      "label": "Posiciones"
+    },
+    {
+      "id": "spa-api",
+      "from": "spa",
+      "to": "api",
+      "label": "Checkout + token",
+      "variant": "emphasis"
+    },
+    {
+      "id": "portal-api",
+      "from": "portal",
+      "to": "api",
+      "label": "REST · polling 10 s"
+    },
+    {
+      "id": "app-api",
+      "from": "app-puerta",
+      "to": "api",
+      "label": "Sync padrón 60 s"
+    },
+    {
+      "id": "api-broker",
+      "from": "api",
+      "to": "broker",
+      "label": "PagoConfirmado",
+      "variant": "dashed"
+    },
+    {
+      "id": "api-pg",
+      "from": "api",
+      "to": "pg",
+      "label": "Venta · UNIQUE silla"
+    },
+    {
+      "id": "api-replica",
+      "from": "api",
+      "to": "replica",
+      "label": "Tablero y reportes",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-redis",
+      "from": "api",
+      "to": "redis-bloqueos",
+      "label": "Bloqueo TTL 10 min"
+    },
+    {
+      "id": "pg-replica",
+      "from": "pg",
+      "to": "replica",
+      "label": "WAL",
+      "variant": "dashed"
+    },
+    {
+      "id": "broker-worker",
+      "from": "broker",
+      "to": "worker",
+      "label": "Emitir boleta",
+      "variant": "dashed"
+    },
+    {
+      "id": "worker-pg",
+      "from": "worker",
+      "to": "pg",
+      "label": "Guarda QR"
+    },
+    {
+      "id": "worker-mensajeria",
+      "from": "worker",
+      "to": "mensajeria",
+      "label": "Email / push",
+      "variant": "dashed"
+    },
+    {
+      "id": "api-pasarela",
+      "from": "api",
+      "to": "pasarela",
+      "label": "Cobra",
+      "variant": "security"
+    },
+    {
+      "id": "pasarela-api",
+      "from": "pasarela",
+      "to": "api",
+      "label": "Webhook",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Decisiones",
+      "items": [
+        "Sala de espera fuera del monolito: escala sola ante 120.000 compradores",
+        "Dos Redis: un pico en la fila no afecta los bloqueos",
+        "Venta definitiva en PostgreSQL con UNIQUE (evento, silla)",
+        "Tablero y reportes leen de la réplica, no de la primaria"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Capacidad",
+      "items": [
+        "Checkout: 10.000 solicitudes/s; con pasarela de 2–10 s hay hasta 100.000 cobros en curso, por eso hilos virtuales",
+        "Puerta: 40 torniquetes + 10 lectores de respaldo, ~500 ingresos/h cada uno"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Puerta sin red",
+      "items": [
+        "La app valida contra el padrón en SQLite, sin llamar al servidor",
+        "Sincroniza cada 60 s; las transferencias cierran 30 min antes del evento"
+      ]
+    }
+  ]
+}
