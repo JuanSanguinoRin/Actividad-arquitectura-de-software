@@ -58,9 +58,12 @@ Requisitos derivados de [vision.md](vision.md) (preguntas 1 a 7) y del [ADR-000]
 
 1. **Monolito y escalabilidad (RNF-01 y RNF-15):** la P6 acepta que no se puede escalar la fila por separado. Para la v1 hay que decidir si la fila virtual queda dentro del monolito o como componente de borde (CDN o sala de espera administrada).
 2. **Consistencia y disponibilidad en distintos lugares (RNF-05 y RNF-09):** la arquitectura debe dejar explícito que en la compra manda la consistencia y en la puerta la disponibilidad.
-3. **Datos que faltan:**
-   - cuánto dura el bloqueo del asiento;
-   - cuántas puertas y lectores hay (20.000 por hora son unas 5,6 validaciones por segundo en total);
-   - cuántas compras por segundo debe confirmar el checkout;
-   - hasta cuándo se permite transferir antes del evento (afecta la ventana de 5 minutos de RNF-09);
-   - cada cuánto se refresca el tablero.
+3. **Supuestos adoptados** (para simplificar el diseño):
+
+| Dato | Valor adoptado |
+|---|---|
+| Duración del bloqueo de asiento | 10 minutos |
+| Puertas y lectores | 40 torniquetes con un lector Android cada uno y 10 lectores de respaldo (50 en total). Cada torniquete atiende unas 500 personas por hora (una cada ~7 s) |
+| Capacidad del checkout | 10.000 solicitudes de compra por segundo en el pico |
+| Cierre de transferencias | 30 minutos antes del inicio del evento |
+| Refresco del tablero del organizador | Cada 10 segundos |
