@@ -41,7 +41,7 @@ Requisitos derivados de [vision.md](vision.md) (preguntas 1 a 7) y del [ADR-000]
 | RNF-03 | Desempeño en la fila | Confirmar la entrada a la fila virtual en **< 3 s** por solicitud | P4 |
 | RNF-04 | Seguridad anti-bot | Bloquear **≥ 95 %** del tráfico de bots antes de la selección de asiento | P4 |
 | RNF-05 | Consistencia | **0 asientos vendidos dos veces.** En la compra, la consistencia pesa más que la disponibilidad | ADR-000, P7 |
-| RNF-06 | Tolerancia a fallos de la pasarela | Usar un timeout acorde a la latencia de la pasarela (2–10 s). Si falla, no confirmar la venta y liberar la silla, sin dejar ventas a medias | P7 |
+| RNF-06 | Tolerancia a fallos de la pasarela | Usar un timeout de **15 s** en la llamada a la pasarela, que ya tarda 2–10 s. Si falla, no confirmar la venta y liberar la silla, sin dejar ventas a medias | P7 |
 | RNF-07 | Durabilidad de la emisión | No perder ningún mensaje de emisión. Si la cola o su consumidor se caen, la entrega se demora pero la venta no se pierde | P7 |
 | RNF-08 | Desempeño en la puerta | Validar en **< 1 s** el 100 % de los casos, incluso con 0 % de conectividad. Throughput de **20.000 ingresos por hora** | P5 |
 | RNF-09 | Frescura del padrón | El lector conoce las invalidaciones de hasta **5 minutos** antes de perder la red. En la puerta, la disponibilidad pesa más que la consistencia estricta | P5, ADR-000 |
