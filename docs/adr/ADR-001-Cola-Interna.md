@@ -1,6 +1,6 @@
 # ADR-000: Qué pasos del checkout van por evento
 
-Estado: borrador
+Estado: Final
 
 ## Decision
 
