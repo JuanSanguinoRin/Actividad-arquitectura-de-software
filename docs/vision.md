@@ -75,7 +75,7 @@ DANIEL ANDRÉS ESTEBAN CARRILLO
 **Artefacto:** el módulo de fila virtual / admisión al flujo de compra.  
 **Entorno:** operación normal, en los primeros 10 minutos tras la apertura de venta, con demanda 8 veces superior a la oferta.  
 **Respuesta:** el sistema admite a los compradores a una fila virtual, los ordena, filtra tráfico no humano con desafíos anti-bot, y libera cupos de compra al ritmo que el backend puede sostener sin degradarse.  
-**Medida:** el sistema permanece disponible (≥99.9%) durante toda la ventana de 10 minutos, confirma el ingreso a la fila en menos de 3 segundos por solicitud, y bloquea al menos el 95% del tráfico identificado como bot antes de que llegue a la selección de asiento.
+**Medida:** el sistema permanece disponible (≥99.9%) durante toda la ventana de 10 minutos, confirma el ingreso a la fila en menos de 3 segundos en el percentil 95 de las solicitudes (supuesto de diseño, apoyado en los límites de tiempo de respuesta de Nielsen y en la latencia de 2 a 10 segundos de la pasarela del caso), y bloquea al menos el 95% del tráfico identificado como bot antes de que llegue a la selección de asiento.
 
 **Pregunta 5** \- Segundo escenario de calidad otro atributo. Redactar un segundo escenario completo sobre un atributo de calidad distinto al anterior (otra de las demandas del caso, o una tensión que el grupo identifique). Mismas seis partes, misma exigencia con la medida.
 
