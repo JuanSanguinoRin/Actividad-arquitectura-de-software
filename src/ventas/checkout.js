@@ -4,7 +4,9 @@ import { conTimeout } from '../util.js';
 // comprador → API de Boletería (este módulo) → base de datos (sillas, órdenes,
 // outbox) → pasarela de pagos. Pasos 1 y 2 síncronos y paso 3 por outbox (ADR-001).
 //
-// TÁCTICA 1 aplicada: bloqueo atómico con vencimiento (ver repositorio-sillas.js).
+// TÁCTICA 1: bloqueo atómico con vencimiento (ver repositorio-sillas.js).
+// TÁCTICA 2: idempotencia con el `ordenId` como llave, generado al bloquear y
+// antes del primer intento de cobro (flujo-checkout.md, paso 2).
 export function crearCheckout({ sillas, ordenes, pasarela, outbox, config, reloj = Date.now }) {
   async function bloquear(sillaId, compradorId) {
     const ordenId = ordenes.nuevoId();
@@ -16,11 +18,15 @@ export function crearCheckout({ sillas, ordenes, pasarela, outbox, config, reloj
   }
 
   async function pagar(ordenId) {
-    const orden = await ordenes.obtener(ordenId);
+    // Estado nuevo que la app debe mostrar mientras la pasarela responde (2 a 10 s).
+    const orden = (await ordenes.cambiarEstadoSi(ordenId, ['creada'], 'pago_en_verificacion'))
+      ?? (await ordenes.obtener(ordenId));
+    if (orden.estado === 'pagada') return { ok: true, yaPagada: true };
     let respuesta;
     try {
       respuesta = await conTimeout(
-        pasarela.cobrar({ monto: orden.monto, referencia: ordenId }),
+        // Con la misma llave, un segundo intento recibe el mismo resultado sin otro cobro.
+        pasarela.cobrar({ monto: orden.monto, referencia: ordenId, idempotencyKey: ordenId }),
         config.timeoutPasarelaMs,
       );
     } catch {
@@ -28,7 +34,9 @@ export function crearCheckout({ sillas, ordenes, pasarela, outbox, config, reloj
     }
     if (respuesta.estado !== 'aprobado') {
       await sillas.liberarSiBloqueadaPor(orden.sillaId, ordenId);
-      await ordenes.actualizar(ordenId, { estado: 'rechazada' });
+      // Sin respuesta no significa sin cobro: si el webhook confirma después, se reembolsa.
+      const estado = respuesta.estado === 'sin respuesta' ? 'sin_respuesta' : 'rechazada';
+      await ordenes.cambiarEstadoSi(ordenId, ['pago_en_verificacion'], estado);
       return { ok: false, motivo: respuesta.estado };
     }
     await confirmarPago({ ordenId, transaccionId: respuesta.transaccionId });
@@ -37,17 +45,22 @@ export function crearCheckout({ sillas, ordenes, pasarela, outbox, config, reloj
 
   // La llaman la respuesta de la pasarela y también su webhook de conciliación (RF-10).
   async function confirmarPago({ ordenId, transaccionId }) {
-    const orden = await ordenes.obtener(ordenId);
+    // TÁCTICA 2: la misma confirmación puede llegar varias veces; solo la primera avanza.
+    const orden = await ordenes.cambiarEstadoSi(
+      ordenId, ['creada', 'pago_en_verificacion', 'sin_respuesta'], 'confirmando', { transaccionId },
+    );
+    if (!orden) return { duplicada: true };
+
     const vendida = await sillas.venderSiBloqueadaPor(orden.sillaId, ordenId);
     if (!vendida) {
-      // FALLA NUEVA que trae el vencimiento: el pago llegó cuando la silla ya
-      // era de otro. No se vende dos veces; se compensa con un reembolso.
-      await ordenes.actualizar(ordenId, { estado: 'reembolso_pendiente', transaccionId });
+      // El pago llegó cuando la silla ya era de otro: no se vende dos veces, se reembolsa.
+      await ordenes.actualizar(ordenId, { estado: 'reembolso_pendiente' });
       await outbox.agregar({ tipo: 'reembolsar', ordenId, sillaId: orden.sillaId });
-      return;
+      return { duplicada: false };
     }
-    await ordenes.actualizar(ordenId, { estado: 'pagada', transaccionId });
+    await ordenes.actualizar(ordenId, { estado: 'pagada' });
     await outbox.agregar({ tipo: 'emitirQR', ordenId, sillaId: orden.sillaId });
+    return { duplicada: false };
   }
 
   pasarela.alRecibirConfirmacion(confirmarPago);
