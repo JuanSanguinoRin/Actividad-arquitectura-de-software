@@ -1,0 +1,16 @@
+{
+  "name": "boleteria-escenario-h14",
+  "version": "1.0.0",
+  "description": "Caso 5, Grupo 5: cada silla se vende una sola vez (escenario de consistencia)",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/escenario-h14.test.js",
+    "escenario:con-falla": "node --test --test-name-pattern=\"con falla\" test/escenario-h14.test.js",
+    "escenario:sin-falla": "node --test --test-name-pattern=\"sin falla\" test/escenario-h14.test.js",
+    "costo": "node scripts/medir-costo.js"
+  }
+}
