@@ -38,7 +38,7 @@ workspace "Boleteria" "Sistema de venta y validacion de entradas para eventos ma
 
         // Pasarela de pagos (ida y vuelta)
         boleteria.api -> pasarela "Cobra la orden" "HTTPS, sincrono, timeout ~15s"
-        pasarela -> boleteria.api "Resultado del pago y token 3-D Secure" "HTTPS, webhook"
+        pasarela -> boleteria.api "Resultado del pago y token 3-D Secure" "HTTPS, webhook, asincrono"
 
         // Dentro de Boleteria
         boleteria.api -> boleteria.db "Bloquea silla, confirma la orden y encola la tarea de emision" "SQL, misma transaccion"
@@ -58,6 +58,14 @@ workspace "Boleteria" "Sistema de venta y validacion de entradas para eventos ma
 
         container boleteria "Contenedores" {
             include *
+            autoLayout lr
+        }
+
+        // Camino del escenario 3 (consistencia del asiento): solo los contenedores que
+        // intervienen en "1 venta y 1 cobro sobre H-14". Sin fila virtual, worker, correo ni lector.
+        container boleteria "Escenario3-Consistencia" {
+            title "Camino del escenario 3: consistencia del asiento (H-14)"
+            include comprador boleteria.api boleteria.db pasarela
             autoLayout lr
         }
 
