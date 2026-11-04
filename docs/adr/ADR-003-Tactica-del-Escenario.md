@@ -21,7 +21,9 @@ Borrar estos comentarios al terminar.
 - Origen del número: [PENDIENTE: de qué documento sale: caso, ADR-000, RNF-xx o supuesto del equipo (S)]
 - Ventana de tiempo: [PENDIENTE: en qué intervalo se mide]
 
-**Camino en la vista de contenedores:** [PENDIENTE: contenedores que intervienen, por ejemplo API de Boletería, Base de datos, Pasarela de pagos]
+**Camino en la vista de contenedores:** 
+
+![ ](contenedores-c4-camino-del-escenario-3-consistencia-del-asiento-diagrama.webp)
 
 **Falla reproducible:** [PENDIENTE: qué falla se provoca y con qué mecanismo del código: variable de entorno, bandera o adaptador simulado de la pasarela]
 
