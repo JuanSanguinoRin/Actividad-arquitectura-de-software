@@ -4,15 +4,15 @@ import { conTimeout } from '../util.js';
 // comprador → API de Boletería (este módulo) → base de datos (sillas, órdenes,
 // outbox) → pasarela de pagos. Pasos 1 y 2 síncronos y paso 3 por outbox (ADR-001).
 //
-// VERSIÓN INICIAL, SIN TÁCTICA: lee la silla y la escribe en otra consulta,
-// el bloqueo no vence y nada es idempotente.
-export function crearCheckout({ sillas, ordenes, pasarela, outbox, config }) {
+// TÁCTICA 1 aplicada: bloqueo atómico con vencimiento (ver repositorio-sillas.js).
+export function crearCheckout({ sillas, ordenes, pasarela, outbox, config, reloj = Date.now }) {
   async function bloquear(sillaId, compradorId) {
-    const silla = await sillas.obtener(sillaId);
-    if (!silla || silla.estado !== 'libre') return { ok: false, motivo: 'silla no disponible' };
-    const orden = await ordenes.crear({ id: ordenes.nuevoId(), sillaId, compradorId, monto: silla.precio });
-    await sillas.guardar({ ...silla, estado: 'bloqueada', ordenId: orden.id });
-    return { ok: true, ordenId: orden.id };
+    const ordenId = ordenes.nuevoId();
+    const ahora = reloj();
+    const silla = await sillas.bloquearSiDisponible(sillaId, ordenId, ahora, ahora + config.bloqueoMs);
+    if (!silla) return { ok: false, motivo: 'silla no disponible' };
+    await ordenes.crear({ id: ordenId, sillaId, compradorId, monto: silla.precio });
+    return { ok: true, ordenId, venceEn: silla.venceEn };
   }
 
   async function pagar(ordenId) {
@@ -27,8 +27,7 @@ export function crearCheckout({ sillas, ordenes, pasarela, outbox, config }) {
       respuesta = { estado: 'sin respuesta' };
     }
     if (respuesta.estado !== 'aprobado') {
-      const silla = await sillas.obtener(orden.sillaId);
-      await sillas.guardar({ ...silla, estado: 'libre', ordenId: null });
+      await sillas.liberarSiBloqueadaPor(orden.sillaId, ordenId);
       await ordenes.actualizar(ordenId, { estado: 'rechazada' });
       return { ok: false, motivo: respuesta.estado };
     }
@@ -39,8 +38,14 @@ export function crearCheckout({ sillas, ordenes, pasarela, outbox, config }) {
   // La llaman la respuesta de la pasarela y también su webhook de conciliación (RF-10).
   async function confirmarPago({ ordenId, transaccionId }) {
     const orden = await ordenes.obtener(ordenId);
-    const silla = await sillas.obtener(orden.sillaId);
-    await sillas.guardar({ ...silla, estado: 'vendida', ordenId });
+    const vendida = await sillas.venderSiBloqueadaPor(orden.sillaId, ordenId);
+    if (!vendida) {
+      // FALLA NUEVA que trae el vencimiento: el pago llegó cuando la silla ya
+      // era de otro. No se vende dos veces; se compensa con un reembolso.
+      await ordenes.actualizar(ordenId, { estado: 'reembolso_pendiente', transaccionId });
+      await outbox.agregar({ tipo: 'reembolsar', ordenId, sillaId: orden.sillaId });
+      return;
+    }
     await ordenes.actualizar(ordenId, { estado: 'pagada', transaccionId });
     await outbox.agregar({ tipo: 'emitirQR', ordenId, sillaId: orden.sillaId });
   }
