@@ -69,9 +69,9 @@ PENDIENTE: enlace de YouTube (video oculto)
 
 | Integrante | Aporte | Parte del video |
 |---|---|---|
-| Angely Sofia Pino Gonzalez | ADR-000, ADR-001, visión del sistema y requisitos | PENDIENTE |
-| Juan Sebastián Sanguino Rincón | Táctica 1: bloqueo atómico con vencimiento (`src/sillas/repositorio-sillas.js`) | PENDIENTE |
-| Laura Alejandra Caballero Prada | Táctica 2: idempotencia con `orden_id` (`src/ventas/checkout.js`, `src/ventas/ordenes.js`) y flujo del checkout | PENDIENTE |
-| David Santiago Rincón | ADR-002: modelo de lenguaje | PENDIENTE |
-| Juan David Mendoza Ropero | Estructura del proyecto, camino sin táctica, pasarela simulada y prueba del escenario que falla | PENDIENTE |
-| Nicolas Felipe Meneses Peinado | ADR-003 y vista de contenedores | PENDIENTE |
+| Angely Sofia Pino Gonzalez | ADR-000, ADR-001, visión del sistema y requisitos | 1. El escenario |
+| Nicolas Felipe Meneses Peinado | ADR-003 y vista de contenedores | 2. El ADR-002 |
+| David Santiago Rincón | ADR-002: modelo de lenguaje | 3. La prueba fallando |
+| Juan Sebastián Sanguino Rincón | Táctica 1: bloqueo atómico con vencimiento (`src/sillas/repositorio-sillas.js`) | 4. La táctica |
+| Laura Alejandra Caballero Prada | Táctica 2: idempotencia con `orden_id` (`src/ventas/checkout.js`, `src/ventas/ordenes.js`) y flujo del checkout | 5. El costo |
+| Juan David Mendoza Ropero | Estructura del proyecto, camino sin táctica, pasarela simulada y prueba del escenario que falla | 6. Qué queda pendiente |
