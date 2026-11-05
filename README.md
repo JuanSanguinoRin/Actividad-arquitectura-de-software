@@ -63,7 +63,7 @@ Otros comandos:
 
 ## Video de sustentación
 
-PENDIENTE: enlace de YouTube (video oculto)
+https://youtu.be/Qbo2FczXPUg
 
 ## Quién hizo qué
 
